@@ -148,38 +148,44 @@ public class Main extends JavaPlugin {
 
 	@Override
 	public void onDisable() {
-		long timestamp = System.currentTimeMillis();
-
-		System.out.println(CONSOLE_PREFIX + "--------------------------------");
-		System.out.println(CONSOLE_PREFIX + " ");
-		System.out.println(CONSOLE_PREFIX + "Disabling " + this.getDescription().getName() + "...");
-
-		if (dataManager != null && !this.failed) {
-			System.out.println(CONSOLE_PREFIX + "Saving data...");
-			dataManager.save();
-		}
-
-		if (botLauncher != null && (botLauncher.getDiscordbot() != null || botLauncher.getTelegrambot() != null)) {
-			System.out.println(CONSOLE_PREFIX + "Disconnecting bots...");
-			botLauncher.disconnect();
-		}
-
-		if (!this.failed) {
-            cuukyFrameWork.disable();
-            VersionUtils.getVersionAdapter().getOnlinePlayers()
-                .forEach(pl -> pl.setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard()));
-        } else {
-			VaroBugreport report = new VaroBugreport();
-			System.out.println(CONSOLE_PREFIX + "Saved Crashreport to " + report.getZipFile().getName());
-		}
-		Bukkit.getScheduler().cancelTasks(this);
-		dataManager.getVaroLoggerManager().cleanUp();
-
-		System.out.println(CONSOLE_PREFIX + "Disabled! (" + (System.currentTimeMillis() - timestamp) + "ms)");
-		System.out.println(CONSOLE_PREFIX + " ");
-		System.out.println(CONSOLE_PREFIX + "--------------------------------");
-		super.onDisable();
+	    long timestamp = System.currentTimeMillis();
+	
+	    System.out.println(CONSOLE_PREFIX + "--------------------------------");
+	    System.out.println(CONSOLE_PREFIX + " ");
+	    System.out.println(CONSOLE_PREFIX + "Disabling " + this.getDescription().getName() + "...");
+	
+	    if (dataManager != null && !this.failed) {
+	        System.out.println(CONSOLE_PREFIX + "Saving data...");
+	        dataManager.save();
+	    }
+	
+	    if (botLauncher != null && (botLauncher.getDiscordbot() != null || botLauncher.getTelegrambot() != null)) {
+	        System.out.println(CONSOLE_PREFIX + "Disconnecting bots...");
+	        botLauncher.disconnect();
+	    }
+	
+	    if (!this.failed) {
+	        if (cuukyFrameWork != null) {
+	            cuukyFrameWork.disable();
+	        }
+	        VersionUtils.getVersionAdapter().getOnlinePlayers()
+	            .forEach(pl -> pl.setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard()));
+	    } else {
+	        VaroBugreport report = new VaroBugreport();
+	        System.out.println(CONSOLE_PREFIX + "Saved Crashreport to " + report.getZipFile().getName());
+	    }
+	
+	    Bukkit.getScheduler().cancelTasks(this);
+	    if (dataManager != null) {
+	        dataManager.getVaroLoggerManager().cleanUp();
+	    }
+	
+	    System.out.println(CONSOLE_PREFIX + "Disabled! (" + (System.currentTimeMillis() - timestamp) + "ms)");
+	    System.out.println(CONSOLE_PREFIX + " ");
+	    System.out.println(CONSOLE_PREFIX + "--------------------------------");
+	    super.onDisable();
 	}
+
 
 	private String calcChecksum() {
 	    try {
